@@ -26,6 +26,13 @@ namespace quiz_backend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CORS", builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,7 +46,7 @@ namespace quiz_backend
             {
                 app.UseHsts();
             }
-
+            app.UseCors("CORS");
             app.UseHttpsRedirection();
             app.UseMvc();
         }
