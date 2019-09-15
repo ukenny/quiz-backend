@@ -14,18 +14,22 @@ namespace quiz_backend.Controllers
     [ApiController]
     public class QuestionsController : ControllerBase
     {
+        private readonly QuizContext _quizContext;
+
+        public QuestionsController(QuizContext quizContext)
+        {
+            _quizContext = quizContext;
+        }
         [HttpGet]
         public IEnumerable<Question> Get()
         {
-            return new Question[] {
-                new Question { Text = "Hello" },
-                new Question { Text = "There" },
-                new Question { Text = "Everyone" }
-            };
+            return _quizContext.Questions;
         }
         [HttpPost]
         public string Post([FromBody]Question question)
         {
+            _quizContext.Questions.Add(question);
+            _quizContext.SaveChanges();
             return JsonConvert.SerializeObject(question);
         }
     }
