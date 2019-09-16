@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using quiz_backend.Models;
@@ -26,11 +27,24 @@ namespace quiz_backend.Controllers
             return _quizContext.Questions;
         }
         [HttpPost]
-        public string Post([FromBody]Question question)
+        public async Task<IActionResult> Post([FromBody]Question question)
         {
             _quizContext.Questions.Add(question);
-            _quizContext.SaveChanges();
-            return JsonConvert.SerializeObject(question);
+            await _quizContext.SaveChangesAsync();
+            return Ok(question);
+        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody]Question question)
+        {
+            if (id != question.ID)
+            {
+                return BadRequest();
+            }
+            _quizContext.Entry(question).State = EntityState.Modified;
+
+            await _quizContext.SaveChangesAsync();
+
+            return Ok(question);
         }
     }
 }
