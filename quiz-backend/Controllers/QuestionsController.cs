@@ -26,6 +26,16 @@ namespace quiz_backend.Controllers
         {
             return _quizContext.Questions;
         }
+        [HttpGet("{quizId}")]
+        public IActionResult Get([FromRoute]int quizId)
+        {
+            var isValidId = _quizContext.Quiz.SingleOrDefaultAsync(quiz => quiz.ID == quizId) != null;
+            if (!isValidId)
+            {
+                return NotFound();
+            }
+            return Ok(_quizContext.Questions.Where(questions => questions.QuizID == quizId).ToListAsync().Result);
+        }
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]Question question)
         {
